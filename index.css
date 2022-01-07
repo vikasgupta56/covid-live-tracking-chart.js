@@ -1,0 +1,12 @@
+.flex{
+    display: flex;
+}
+.left{
+    width: 50%;
+}
+.right{
+    width: 50%;
+}
+table{
+    border: 1px solid gray;
+}
