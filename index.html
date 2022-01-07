@@ -21,33 +21,99 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <span class="navbar-text">
-              Bootstrap Navbar Covid Cases Live Analysis with chart.js designed and developed by Vikas
+                Bootstrap Navbar Covid Cases Live Analysis with chart.js designed and developed by Vikas
             </span>
-          </div>
-      </nav>
+        </div>
+    </nav>
     <div class="flex">
-    <div class="left">
-        <table class="table caption-top table-responsive">
-            <caption>Covid Analysis Table</caption>
-            <thead>
-                <tr>
-                    <th scope="col">State</th>
-                    <th scope="col">Active</th>
-                    <th scope="col">Dead</th>
-                    <th scope="col">Recovered</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="left">
+            <table class="table caption-top table-responsive">
+                <caption>Covid Analysis Table</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">State</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Dead</th>
+                        <th scope="col">Recovered</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
-    </div>
-    <div class="right">
-        <canvas id="chartCanvas"></canvas>
+        </div>
+        <div class="right">
+            <canvas id="chartCanvas"></canvas>
 
+        </div>
     </div>
-</div>
-    <script src="/index.js"></script>
+    <script>
+
+        let func = async () => {
+            let res = await fetch('https://data.covid19india.org/data.json')
+            let jsonres = await res.json()
+            let data = jsonres.statewise;
+            let tableData = document.getElementsByTagName('tbody')[0].innerHTML;
+            let state = [];
+            let active = [];
+            let recovered = [];
+            let deaths = [];
+            data.map((data) => {
+                tableData = tableData +
+                    `<tr>
+                <th>${data.state}</th>
+                <td>${data.active}</td>
+                <td>${data.deaths}</td>
+                <td>${data.recovered}</td>
+              </tr>`
+
+                active.push(data.active)
+                recovered.push(data.recovered)
+                deaths.push(data.deaths)
+                state.push(data.state)
+            })
+            document.getElementsByTagName('tbody')[0].innerHTML = tableData;
+            active.shift()
+            recovered.shift()
+            deaths.shift()
+            state.shift()
+
+            console.log(active, "active");
+
+            let mychart = document.getElementById("chartCanvas").getContext('2d');
+            var chart = new Chart(mychart, {
+                type: "line",
+                data: {
+                    labels: state,
+                    datasets: [
+                        {
+                            label: "Active Cases",
+                            data: active,
+                            backgroundColor: "black",
+                            minBarLength: 100
+                        },
+                        {
+                            label: "Recovered Cases",
+                            data: recovered,
+                            backgroundColor: "green",
+                            minBarLength: 100
+                        },
+                        {
+                            label: "Death Cases",
+                            data: deaths,
+                            backgroundColor: "red",
+                            minBarLength: 100
+                        }
+                    ]
+                },
+                options: {}
+
+            }
+
+            )
+        }
+        func()
+    </script>
 </body>
 
 </html>
