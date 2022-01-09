@@ -25,7 +25,9 @@
             </span>
         </div>
     </nav>
+    <p onclick="power('8')">power</p>
     <div class="flex">
+
         <div class="left">
             <table class="table caption-top table-responsive">
                 <caption>Covid Analysis Table</caption>
@@ -48,11 +50,138 @@
         </div>
     </div>
     <script>
+        var chart;
+        let arr = [
+            {
+                month: "January",
+                code: "01",
+                cases: []
+            },
+            {
+                month: "February",
+                code: "02",
+                cases: []
+            }, {
+                month: "March",
+                code: "03",
+                cases: []
+            }, {
+                month: "April",
+                code: "04",
+                cases: []
+            }, {
+                month: "May",
+                code: "05",
+                cases: []
+            }, {
+                month: "June",
+                code: "06",
+                cases: []
+            }, {
+                month: "July",
+                code: "07",
+                cases: []
+            }, {
+                month: "August",
+                code: "08",
+                cases: []
+            },
+            {
+                month: "September",
+                code: "09",
+                cases: []
+            }, {
+                month: "October",
+                code: "10",
+                cases: []
+            }, {
+                month: "November",
+                code: "11",
+                cases: []
+            },
+            {
+                month: "December",
+                code: "12",
+                cases: []
+            }
+        ]
+        let casess = [];
+        let sactive = [];
+        let srecovered = [];
+        let sdeaths = [];
+
+
+        let statemap = async (state) => {
+            // console.log(state);
+            // console.log(arr);
+            casess = [];
+            sactive=[];
+            sdeaths=[];
+            srecovered=[]
+            arr.map((ar, index) => {
+                let active = 0;
+                let recovered = 0;
+                let deaths = 0;
+                // console.log(ar);
+                ar.cases.forEach(a => {
+                    a.regional.forEach((c) => {
+                        // console.log(c);
+                        if (c.loc == state) {
+                            // console.log(c);
+                            active = active + c.totalConfirmed;
+                            deaths = deaths + c.deaths;
+                            recovered = recovered + c.discharged;
+                        }
+                    })
+                });
+                casess.push({
+                    active, recovered, deaths
+                })
+                sactive.push(active)
+                srecovered.push(recovered)
+                sdeaths.push(deaths)
+                // console.log(casess, "b");
+            })
+
+            let mychart = document.getElementById("chartCanvas").getContext('2d');
+            chart.destroy()
+            chart = new Chart(mychart, {
+                type: "line",
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    datasets: [
+                        {
+                            label: "Active Cases",
+                            data: sactive,
+                            backgroundColor: "black",
+                            minBarLength: 100
+                        },
+                        {
+                            label: "Recovered Cases",
+                            data: srecovered,
+                            backgroundColor: "green",
+                            minBarLength: 100
+                        },
+                        {
+                            label: "Death Cases",
+                            data: sdeaths,
+                            backgroundColor: "red",
+                            minBarLength: 100
+                        }
+                    ]
+                },
+                options: {}
+
+            }
+
+            )
+        }
 
         let func = async () => {
             let res = await fetch('https://data.covid19india.org/data.json')
             let jsonres = await res.json()
             let data = jsonres.statewise;
+            // console.log(jsonres);
             let tableData = document.getElementsByTagName('tbody')[0].innerHTML;
             let state = [];
             let active = [];
@@ -60,7 +189,7 @@
             let deaths = [];
             data.map((data) => {
                 tableData = tableData +
-                    `<tr>
+                    `<tr id=${data.state} onclick="statemap('${data.state}')" >
                 <th>${data.state}</th>
                 <td>${data.active}</td>
                 <td>${data.deaths}</td>
@@ -77,11 +206,8 @@
             recovered.shift()
             deaths.shift()
             state.shift()
-
-            console.log(active, "active");
-
             let mychart = document.getElementById("chartCanvas").getContext('2d');
-            var chart = new Chart(mychart, {
+            chart = new Chart(mychart, {
                 type: "line",
                 data: {
                     labels: state,
@@ -111,6 +237,34 @@
             }
 
             )
+
+            let mres = await fetch('https://api.rootnet.in/covid19-in/stats/history')
+            let mresj = await mres.json()
+            let mdata = mresj.data
+
+            mdata.map((data) => {
+                // console.log(data);
+                for (let index = 0; index < 12; index++) {
+                    let bool = data.day.slice(5, 7).includes(arr[index].code) && data.day.includes('2021')
+                    // console.log(bool);
+                    if (bool) {
+                        arr[index].cases.push(data)
+                    }
+                }
+
+            })
+
+            // console.log(arr);
+
+
+
+
+
+
+
+
+
+
         }
         func()
     </script>
