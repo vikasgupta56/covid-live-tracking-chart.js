@@ -12,9 +12,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
         integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -181,34 +181,56 @@
                     ]
                 },
                 options: {
-                    title: {
-                        display: true,
-                        text: 'Covid Month wise chart analysis'
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Covid Monthly Analysis 2021'
+                        }
                     },
                     scales: {
-                        //     yAxes: [{
-
-                        //         id: 'B',
-                        //         type: 'linear',
-                        //         position: 'right',
-                        //         // ticks: {
-                        //         //     max: 1,
-                        //         //     min: 0
-                        //         // },
-                        //     }],
-                        xAxes: [{
+                        y: {
+                            type: 'linear',
                             display: true,
-                            scaleLabel: {
+                            position: 'left',
+                            title: {
                                 display: true,
-                                labelString: 'Month'
+                                text: 'No of cases (Active/Recovered)'
+                            }
+                        },
+                        B: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'No of cases (Deaths)'
                             },
-                        }]
+
+                            // grid line settings
+                            grid: {
+                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                            },
+                        },
+                        x:{
+                            title: {
+                            display: true,
+                            text: 'Months(2021)'
+                        }
+                        }
                     }
+
                 }
             }
 
             )
         }
+
+
+
 
         let func = async () => {
             let res = await fetch('https://data.covid19india.org/data.json')
@@ -266,10 +288,24 @@
                     ]
                 },
                 options: {
-                    title: {
-                        display: true,
-                        text: 'Covid Month wise chart analysis'
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Covid Monthly Analysis 2021'
+                        }
                     },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        }
+                    }
                 },
 
             }
